@@ -1,13 +1,13 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import {DeploymentEvent, PullRequestEvent, PushEvent, WorkflowRunEvent} from '@octokit/webhooks-types'
+import { DeploymentEvent, PullRequestEvent, PushEvent, WorkflowRunEvent } from '@octokit/webhooks-types'
 import { computePullRequestClosedMetrics, computePullRequestOpenedMetrics } from './pullRequest/metrics'
 import { computePullRequestDeploymentMetrics } from './deployment/metrics'
 import { computePushMetrics } from './push/metrics'
 import { queryCompletedCheckSuite } from './queries/completedCheckSuite'
 import { queryClosedPullRequest } from './queries/closedPullRequest'
 import { computeRateLimitMetrics } from './rateLimit/metrics'
-import {GitHubContext, PullRequestResponse} from './types'
+import { GitHubContext, PullRequestResponse } from './types'
 import { computeWorkflowRunJobStepMetrics } from './workflowRun/metrics'
 import { computeScheduleMetrics } from './schedule/metrics'
 import { SubmitMetrics, createMetricsClient } from './client'
@@ -114,10 +114,10 @@ const handlePullRequest = async (
 }
 
 const handleDeployment = async (
-    submitMetrics: SubmitMetrics,
-    e: DeploymentEvent,
-    context: GitHubContext,
-    inputs: Inputs
+  submitMetrics: SubmitMetrics,
+  e: DeploymentEvent,
+  context: GitHubContext,
+  inputs: Inputs
 ) => {
   core.info(`Got a deployment event: ${e.deployment.url}`)
 
@@ -125,7 +125,7 @@ const handleDeployment = async (
   const pullRequest = await octokit.rest.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    pull_number: 123
+    pull_number: 123,
   })
 
   return await submitMetrics(computePullRequestDeploymentMetrics(e, pullRequest as PullRequestResponse), 'deployment')
