@@ -8,6 +8,7 @@ import { examplePullRequestClosedEvent } from './fixtures'
 import { WebhookPayload } from '@actions/github/lib/interfaces'
 import { examplePullRequestOpenedEvent } from './fixtures'
 import { exampleClosedPullRequestQuery } from './pullRequest/fixtures/closedPullRequest'
+import { exampleDeploymentEvent } from './fixtures'
 
 jest.mock('@actions/core')
 
@@ -118,6 +119,30 @@ test('pull_request_closed', async () => {
       collectStepMetrics: false,
       sendPullRequestLabels: true,
     }
+  )
+  expect(getOctokit).toHaveBeenCalledWith('GITHUB_TOKEN')
+  expect(submitMetrics).toHaveBeenCalledTimes(2)
+  expect(submitMetrics.mock.calls).toMatchSnapshot()
+})
+
+test('deployment', async () => {
+  octokitMock.rest.rateLimit.get.mockResolvedValue(exampleRateLimitResponse)
+  submitMetrics.mockResolvedValue({ status: 'ok' })
+
+  await run(
+      {
+        eventName: 'deployment',
+        payload: exampleDeploymentEvent as WebhookPayload,
+        repo: { owner: 'Codertocat', repo: 'Hello-World' },
+      },
+      {
+        githubToken: 'GITHUB_TOKEN',
+        githubTokenForRateLimitMetrics: 'GITHUB_TOKEN',
+        datadogApiKey: 'DATADOG_API_KEY',
+        collectJobMetrics: false,
+        collectStepMetrics: false,
+        sendPullRequestLabels: true,
+      }
   )
   expect(getOctokit).toHaveBeenCalledWith('GITHUB_TOKEN')
   expect(submitMetrics).toHaveBeenCalledTimes(2)

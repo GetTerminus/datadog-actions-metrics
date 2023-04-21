@@ -152,13 +152,3 @@ const getRateLimitMetrics = async (context: GitHubContext, inputs: Inputs) => {
   const rateLimit = await octokit.rest.rateLimit.get()
   return computeRateLimitMetrics(context, rateLimit)
 }
-
-const getPullRequestMetrics = async (context: GitHubContext, inputs: Inputs) => {
-  const octokit = github.getOctokit(inputs.githubTokenForRateLimitMetrics)
-  const pullRequest = await octokit.rest.pulls.get({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    pull_number: 123,
-  })
-  return computePullRequestDeploymentMetrics(context.payload as DeploymentEvent, pullRequest as PullRequestResponse)
-}

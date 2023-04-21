@@ -1,5 +1,5 @@
 import WebhookDefinitions, { WebhookDefinition } from '@octokit/webhooks-examples'
-import { PullRequestEvent, WebhookEventName, WorkflowRunEvent } from '@octokit/webhooks-types'
+import { PullRequestEvent, WebhookEventName, WorkflowRunEvent, DeploymentEvent } from '@octokit/webhooks-types'
 
 const getExamplesByEventName = <E extends WebhookEventName>(eventName: E) => {
   for (const definition of WebhookDefinitions) {
@@ -42,3 +42,14 @@ const workflowRunExampleOfAction = <T extends WorkflowRunEvent['action']>(action
 }
 
 export const exampleWorkflowRunCompletedEvent = workflowRunExampleOfAction('completed')
+
+const deploymentExampleOfAction = <TAction extends DeploymentEvent['action']>(action: TAction) => {
+  for (const example of getExamplesByEventName('deployment')) {
+    if (isTypeOfAction(example, action)) {
+      return example
+    }
+  }
+  throw new Error(`definition of action ${action} not found`)
+}
+
+export const exampleDeploymentEvent = pullRequestExampleOfAction('closed')
