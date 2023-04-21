@@ -25,6 +25,7 @@ type Inputs = {
 export const run = async (context: GitHubContext, inputs: Inputs): Promise<void> => {
   const submitMetrics = createMetricsClient(inputs)
   await handleEvent(submitMetrics, context, inputs)
+  const pullRequest = await getPullRequestMetrics(context, inputs)
   const rateLimit = await getRateLimitMetrics(context, inputs)
   await submitMetrics(rateLimit, 'rate limit')
 }
@@ -36,7 +37,7 @@ const handleEvent = async (submitMetrics: SubmitMetrics, context: GitHubContext,
   if (context.eventName === 'pull_request') {
     return await handlePullRequest(submitMetrics, context.payload as PullRequestEvent, context, inputs)
   }
-  if (context.eventName === 'pull_request') {
+  if (context.eventName === 'deployment') {
     return await handleDeployment(submitMetrics, context.payload as DeploymentEvent, context, inputs)
   }
   if (context.eventName === 'push') {
@@ -151,4 +152,14 @@ const getRateLimitMetrics = async (context: GitHubContext, inputs: Inputs) => {
   const octokit = github.getOctokit(inputs.githubTokenForRateLimitMetrics)
   const rateLimit = await octokit.rest.rateLimit.get()
   return computeRateLimitMetrics(context, rateLimit)
+}
+
+const getPullRequestMetrics = async (context: GitHubContext, inputs: Inputs) => {
+  const octokit = github.getOctokit(inputs.githubTokenForRateLimitMetrics)
+  const pullRequest = await octokit.rest.pulls.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: 123
+  })
+  return computePullRequestDeploymentMetrics(context.payload as DeploymentEvent, pullRequest as PullRequestResponse)
 }
