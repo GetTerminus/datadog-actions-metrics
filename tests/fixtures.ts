@@ -52,4 +52,4 @@ const deploymentExampleOfAction = <TAction extends DeploymentEvent['action']>(ac
   throw new Error(`definition of action ${action} not found`)
 }
 
-export const exampleDeploymentEvent = pullRequestExampleOfAction('closed')
+export const exampleDeploymentEvent = deploymentExampleOfAction('created')
