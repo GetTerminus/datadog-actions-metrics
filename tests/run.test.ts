@@ -130,19 +130,19 @@ test('deployment', async () => {
   submitMetrics.mockResolvedValue({ status: 'ok' })
 
   await run(
-      {
-        eventName: 'deployment',
-        payload: exampleDeploymentEvent as WebhookPayload,
-        repo: { owner: 'Codertocat', repo: 'Hello-World' },
-      },
-      {
-        githubToken: 'GITHUB_TOKEN',
-        githubTokenForRateLimitMetrics: 'GITHUB_TOKEN',
-        datadogApiKey: 'DATADOG_API_KEY',
-        collectJobMetrics: false,
-        collectStepMetrics: false,
-        sendPullRequestLabels: true,
-      }
+    {
+      eventName: 'deployment',
+      payload: exampleDeploymentEvent as WebhookPayload,
+      repo: { owner: 'Codertocat', repo: 'Hello-World' },
+    },
+    {
+      githubToken: 'GITHUB_TOKEN',
+      githubTokenForRateLimitMetrics: 'GITHUB_TOKEN',
+      datadogApiKey: 'DATADOG_API_KEY',
+      collectJobMetrics: false,
+      collectStepMetrics: false,
+      sendPullRequestLabels: true,
+    }
   )
   expect(getOctokit).toHaveBeenCalledWith('GITHUB_TOKEN')
   expect(submitMetrics).toHaveBeenCalledTimes(2)
