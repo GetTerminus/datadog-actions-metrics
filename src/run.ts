@@ -159,7 +159,7 @@ const getPullRequestMetrics = async (context: GitHubContext, inputs: Inputs) => 
   const pullRequest = await octokit.rest.pulls.get({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    pull_number: 123
+    pull_number: 123,
   })
   return computePullRequestDeploymentMetrics(context.payload as DeploymentEvent, pullRequest as PullRequestResponse)
 }
